@@ -21,6 +21,7 @@ This project demonstrates how AI can be built and documented in a **GxP-complian
 
 ```mermaid
 flowchart TD
+<<<<<<< HEAD
     A[User Query] --> B[Embed Query (BGE-small-en)]
     B --> C[Retrieve Top-k Chunks (ChromaDB)]
     C --> D[Construct Prompt (LangChain)]
@@ -44,3 +45,9 @@ flowchart TD
     Risks --> TM["Traceability Matrix"]
     TM --> TP["Test Plan"]
     TP --> VSR["Validation Summary Report"]
+=======
+    A[User Query] --> B["Embed Query (BGE-small-en)"]
+    B --> C["Retrieve Top-k Chunks (ChromaDB)"]
+    C --> D["Construct Prompt (LangChain)"]
+    D --> E["Phi-3 Mini LLM"]
+    E --> F["Answer with Sources"]
