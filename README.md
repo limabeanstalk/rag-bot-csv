@@ -28,17 +28,17 @@ flowchart TD
     E --> F["Answer with Sources"]
 ```
 
-```markdown
 ## 📚 Project Documentation
 
+```markdown
 All validation and compliance documentation is organized in the [`docs/`](docs) folder: - [User Requirements Specification (URS)](docs/urs.md) 
 - [Functional Requirements Specification (FRS)](docs/frs.md) 
 - [Risk Assessment](docs/risk_assessment.md) 
 - [Traceability Matrix](docs/traceability_matrix.md) - [Test Plan](docs/test_plan.md) 
 - [Validation Summary Report](docs/validation_summary.md)
-
-## 📊 Documentation Flow
 ```
+## 📊 Documentation Flow
+
 ```mermaid
 flowchart TD
     URS["User Requirements Specification"] --> FRS["Functional Requirements Specification"]
