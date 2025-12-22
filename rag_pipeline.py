@@ -69,25 +69,13 @@ def semantic_search(query, k=5):
 # 4B. Rerank Results (NEW)
 # -----------------------------
 def rerank_results(query, docs):
+    if not docs:
+        return []   # <-- prevents IndexError
 
-    ### NEW: prepare (query, chunk) pairs for reranker
     pairs = [(query, d["text"]) for d in docs]
-
-    ### NEW: score with cross-encoder
     scores = reranker.predict(pairs)
-
-    ### NEW: sort by reranker score
-    ranked = sorted(
-        zip(docs, scores),
-        key=lambda x: x[1],
-        reverse=True
-    )
-
-    ### NEW: keep top 5 reranked chunks
-    top_docs = [doc for doc, score in ranked[:5]]
-
-    return top_docs
-
+    ranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
+    return [doc for doc, score in ranked[:5]]
 
 # -----------------------------
 # 5. Build Context (UPDATED)
@@ -134,6 +122,9 @@ ANSWER:
 # 7. Public API for Streamlit (UPDATED)
 # -----------------------------
 def ask(question, k=5):
+
+    if not initial_chunks:
+        return "No relevant context found in the knowledge base."
 
     ### CHANGE: retrieve initial candidates
     initial_chunks = semantic_search(question, k=k)
