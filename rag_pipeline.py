@@ -1,4 +1,5 @@
 # rag_pipeline.py
+print("Loaded rag_pipeline.py successfully")
 
 import numpy as np
 import os
