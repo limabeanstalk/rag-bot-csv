@@ -64,7 +64,7 @@ def semantic_search(query, k=5):
 # # 4B. Rerank Results
 # ----------------------------- 
 def rerank_results(query, docs):
-    pairs for reranker pairs = [(query, d["text"]) for d in docs] 
+    pairs = [(query, d["text"]) for d in docs]
     scores = reranker.predict(pairs) 
     
     ranked = sorted(
