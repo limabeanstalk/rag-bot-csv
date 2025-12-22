@@ -123,11 +123,11 @@ ANSWER:
 # -----------------------------
 def ask(question, k=5):
 
-    if not initial_chunks:
-        return "No relevant context found in the knowledge base."
-
     ### CHANGE: retrieve initial candidates
     initial_chunks = semantic_search(question, k=k)
+
+    if not initial_chunks:
+        return "No relevant context found in the knowledge base."
 
     ### NEW: rerank them
     reranked_chunks = rerank_results(question, initial_chunks)
