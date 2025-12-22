@@ -10,8 +10,9 @@ transformers==4.36.2
 safetensors==0.4.1
 huggingface_hub==0.19.4
 
-# PyTorch CPU (safe for Streamlit Cloud)
-torch>=2.5
+# Let pip choose the correct torch version for Python 3.11
+torch
+
 
 
 
