@@ -1,6 +1,4 @@
 # rag_pipeline.py
-print("Loaded rag_pipeline.py successfully")
-
 import numpy as np
 import os
 from pymongo import MongoClient
@@ -71,7 +69,7 @@ def rerank_results(query, docs):
         zip(docs, scores), 
         key=lambda x: x[1], 
         reverse=True
-     ) 
+    ) 
      
     top_docs = [doc for doc, score in ranked[:5]]
      
