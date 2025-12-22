@@ -9,7 +9,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 # -----------------------------
 # 1. Load Embedding Model
 # -----------------------------
-embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+embedder = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L3-v2")
 
 # -----------------------------
 # 2. Connect to MongoDB
