@@ -1,0 +1,14 @@
+streamlit==1.32.0
+pymongo==4.6.1
+numpy==1.26.4
+
+# Embeddings
+sentence-transformers==2.2.2
+
+# Hugging Face model loading
+transformers==4.36.2
+accelerate==0.25.0
+safetensors==0.4.1
+
+# PyTorch CPU (safe for Streamlit Cloud)
+torch==2.1.2
