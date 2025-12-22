@@ -5,11 +5,17 @@ import os
 from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from sentence_transformers import CrossEncoder
 
 # -----------------------------
 # 1. Load Embedding Model
 # -----------------------------
 embedder = SentenceTransformer("sentence-transformers/multi-qa-MiniLM-L6-cos-v1")
+
+# ----------------------------- 
+# # 1B. Load Reranker 
+# ----------------------------- 
+reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 # -----------------------------
 # 2. Connect to MongoDB
@@ -40,7 +46,8 @@ llm = pipeline(
 # 4. Semantic Search
 # -----------------------------
 def semantic_search(query, k=5):
-    query_emb = embedder.encode(query)
+   initial_k = 20
+   query_emb = embedder.encode(query)
     results = []
 
     for doc in collection.find():
@@ -50,15 +57,32 @@ def semantic_search(query, k=5):
         results.append((score, doc))
 
     results.sort(key=lambda x: x[0], reverse=True)
-    return [doc for _, doc in results[:k]]
+    return [doc for _, doc in results[:initial_k]]
+
+# ----------------------------- 
+# # 4B. Rerank Results
+# ----------------------------- 
+def rerank_results(query, docs):
+    pairs for reranker pairs = [(query, d["text"]) for d in docs] 
+    scores = reranker.predict(pairs) 
+    
+    ranked = sorted(
+        zip(docs, scores), 
+        key=lambda x: x[1], 
+        reverse=True
+     ) 
+     
+     top_docs = [doc for doc, score in ranked[:5]]
+     
+     return top_docs
 
 # -----------------------------
 # 5. Build Context
 # -----------------------------
 def build_context(chunks):
     context = ""
-    for c in chunks:
-        context += c["text"] + "\n---\n"
+    for i,c in enumerate(chunks):
+        context +=f"+++ CHUNK {i+1} ===\n{c["text"]}\n\n"
     return context
 
 # -----------------------------
@@ -93,9 +117,8 @@ ANSWER:
 # 7. Public API for Streamlit
 # -----------------------------
 def ask(question, k=5):
-    chunks = semantic_search(question, k=k)
-    context = build_context(chunks)
+    initial_chunks = semantic_search(question, k=k)
+    reranked_chunks = rerank_results(question, initial_chunks)
+    context = build_context(reranked_chunks)
     answer = generate_answer(question, context)
     return answer
-
-
