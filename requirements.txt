@@ -6,13 +6,13 @@ numpy==1.26.4
 sentence-transformers==2.2.2
 
 # Hugging Face model loading
-huggingface_hub==0.20.3
 transformers==4.36.2
-accelerate==0.25.0
 safetensors==0.4.1
+huggingface_hub==0.16.4
 
 # PyTorch CPU (safe for Streamlit Cloud)
 torch>=2.5
+
 
 
 
