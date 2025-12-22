@@ -23,7 +23,7 @@ collection = db["chunks"]
 # -----------------------------
 # 3. Load LLM (Flan)
 # -----------------------------
-model_name = "google/flan-t5-small"
+model_name = "google/flan-t5-base"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
