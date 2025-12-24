@@ -26,8 +26,7 @@ llm = pipeline(
     model=model,
     tokenizer=tokenizer,
     max_new_tokens=300,
-    max_length=2048,      
-    truncation=False,
+    max_length=768,
     temperature=0.2,
 )
 
