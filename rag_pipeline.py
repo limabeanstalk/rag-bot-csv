@@ -117,7 +117,7 @@ def ask(question, collection, k=5):
         return "No relevant context found in the knowledge base."
 
     # Step 2: build context (no reranker in notebook)
-    context = build_context(initial_chunks[:3])   # top 3 like notebook
+    context = build_context(initial_chunks[:2])   # top 3 like notebook
 
     # Step 3: generate answer
     answer = generate_answer(question, context)
