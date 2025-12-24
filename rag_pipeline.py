@@ -124,6 +124,7 @@ Do NOT mention, evaluate, or refer to any other section numbers in the context.
 Do NOT explain why other sections are irrelevant.
 Do NOT repeat phrases.
 Provide a clear, complete answer.
+Provide a single, unified answer. Do not restate or repeat any text from the context.
 """
 
     response = llm(prompt)
