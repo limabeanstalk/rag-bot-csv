@@ -89,8 +89,8 @@ def build_context(chunks):
 def generate_answer(question, context):
 
     prompt = f"""
-You are a regulatory assistant. Use ONLY the text in the context below to answer the question. 
-If the answer is not contained in the context, say you cannot find it.
+Use ONLY the context to answer the question. 
+If the answer is not in the context, say so.
 
 Context:
 {context}
@@ -98,7 +98,7 @@ Context:
 Question:
 {question}
 
-Answer clearly and cite section numbers when possible.
+Answer clearly and cite section numbers.
 """
 
     response = llm(prompt)[0]["generated_text"]
