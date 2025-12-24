@@ -15,4 +15,4 @@ regex
 accelerateprotobuf
 
 # CPU-compatible torch for Streamlit Cloud
-torch==2.1.2
+torch==2.1.0
