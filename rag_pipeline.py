@@ -119,7 +119,7 @@ Context:
 Question:
 {question}
 
-Only cite section numbers from section headers.
+Do not repeat phrases. Do not repeat section numbers. Keep the answer concise.
 """
 
     response = llm(prompt)
