@@ -119,7 +119,7 @@ Context:
 Question:
 {question}
 
-Do not repeat phrases. Do not repeat section numbers. Keep the answer concise.
+CIte the section number(s) where the information was found. Do not repeat phrases. Keep the answer concise.
 """
 
     response = llm(prompt)
