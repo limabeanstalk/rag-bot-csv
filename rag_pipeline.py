@@ -119,7 +119,7 @@ Context:
 Question:
 {question}
 
-Cite the relevant section number. Do not repeat phrases. Keep the answer concise.
+If the context includes a section number relevant to the answer, cite it once. Do not repeat phrases. Keep the answer concise.
 """
 
     response = llm(prompt)
@@ -137,7 +137,7 @@ def ask(question, collection, k=5):
         return "No relevant context found in the knowledge base."
 
     # Step 2: build context (no reranker in notebook)
-    context = build_context(initial_chunks[:3])  
+    context = build_context(initial_chunks[:2])  
 
     # Step 3: generate answer
     answer = generate_answer(question, context)
