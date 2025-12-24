@@ -122,7 +122,7 @@ Question:
 If the context includes a section number relevant to the answer, cite it once.
 Ignore any section numbers that are not relevant to the answer.
 Do not repeat phrases.
-Provide a clear, complete answer.
+Provide a clear, complete answer. Ignore any section mumbers in the context that are not directly related to the answer.
 """
 
     response = llm(prompt)
