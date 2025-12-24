@@ -119,7 +119,7 @@ Context:
 Question:
 {question}
 
-Answer clearly and cite section numbers.
+If the context includes a section number, cite it once. Do not repeat section numbers.
 """
 
     response = llm(prompt)
