@@ -35,8 +35,8 @@ llm = pipeline(
 # ---------------------------------------------------------
 def init_mongo(uri):
     client = MongoClient(uri)
-    db = client["gxp_guide"]              # <-- NOTEBOOK DB
-    return db["regulatory_chunks"]        # <-- NOTEBOOK COLLECTION
+    db = client["gxp_guide"]            
+    return db["regulatory_chunks"]      
 
 
 # ---------------------------------------------------------
@@ -96,7 +96,7 @@ Context:
 {context}
 
 Question:
-{query}
+{question}
 
 Answer clearly and cite section numbers when possible.
 """
