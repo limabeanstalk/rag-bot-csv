@@ -36,7 +36,22 @@ def llm(prompt):
     }
 
     response = requests.post(url, headers=headers, json=payload)
-    data = response.json()
+
+    # Parse JSON safely
+    try:
+        data = response.json()
+    except Exception:
+        return "Groq returned a non‑JSON response."
+
+    # If Groq returned an error, surface it
+    if "error" in data:
+        return f"Groq API error: {data['error']}"
+
+    # If choices are missing, show the whole response for debugging
+    if "choices" not in data:
+        return f"Unexpected Groq response format: {data}"
+
+    # Normal success path
     return data["choices"][0]["message"]["content"]
 
 # ---------------------------------------------------------
