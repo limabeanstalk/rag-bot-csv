@@ -49,22 +49,28 @@ def init_mongo(uri):
 # ---------------------------------------------------------
 def semantic_search(query, collection, k=5):
 
-    initial_k = 20  # retrieve more for reranking
+    initial_k = 20
 
-    query_emb = embedder.encode(query)
+    # Embed and normalize query
+    query_emb = embedder.encode(query, normalize_embeddings=True)
+
     results = []
 
     for doc in collection.find():
-        emb = np.array(doc["embedding"])
-        score = np.dot(query_emb, emb) / (
-            np.linalg.norm(query_emb) * np.linalg.norm(emb)
-        )
+        emb = np.array(doc["embedding"], dtype=float)
+
+        # Normalize stored embedding
+        emb = emb / np.linalg.norm(emb)
+
+        # Cosine similarity
+        score = np.dot(query_emb, emb)
+
         results.append((score, doc))
 
+    # Sort by similarity
     results.sort(key=lambda x: x[0], reverse=True)
 
     return [doc for _, doc in results[:initial_k]]
-
 
 # ---------------------------------------------------------
 # 6. Rerank Results
