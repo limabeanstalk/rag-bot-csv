@@ -119,12 +119,11 @@ Context:
 Question:
 {question}
 
+Provide a clear, natural explanation in your own words based on the context.
+Do not copy the context verbatim unless necessary for accuracy.
 Identify the section number that contains the answer and cite it once at the end of your response in parentheses.
-Do NOT mention, evaluate, or refer to any other section numbers in the context.
-Do NOT explain why other sections are irrelevant.
+Do NOT mention or evaluate any other section numbers.
 Do NOT repeat phrases.
-Provide a clear, complete answer.
-Provide a single, unified answer. Do not restate or repeat any text from the context.
 """
 
     response = llm(prompt)
