@@ -2,22 +2,20 @@ streamlit==1.32.0
 pymongo==4.6.1
 numpy==1.26.4
 
-# Embeddings
+# Embeddings + Reranker
 sentence-transformers==2.2.2
+scikit-learn
+tqdm
 
 # Hugging Face model loading
 transformers==4.36.2
 safetensors==0.4.1
 huggingface_hub==0.19.4
+regex
 
 # Let pip choose the correct torch version for Python 3.11
 torch
 
-
-
-
-
-
-
-
-
+# Optional but recommended
+accelerate
+protobuf

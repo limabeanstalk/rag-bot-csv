@@ -1,34 +1,26 @@
 # rag_pipeline.py
 
 import numpy as np
-import os
 from pymongo import MongoClient
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, CrossEncoder
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
-from sentence_transformers import CrossEncoder   # <-- NEW: import reranker
 
-# -----------------------------
+
+# ---------------------------------------------------------
 # 1. Load Embedding Model
-# -----------------------------
+# ---------------------------------------------------------
 embedder = SentenceTransformer("sentence-transformers/multi-qa-MiniLM-L6-cos-v1")
 
-# -----------------------------
-# 1B. Load Reranker (NEW)
-# -----------------------------
-reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")   # <-- NEW
 
-# -----------------------------
-# 2. Connect to MongoDB
-# -----------------------------
-MONGO_URI = os.getenv("MONGO_URI")
-client = MongoClient(MONGO_URI)
+# ---------------------------------------------------------
+# 2. Load Reranker
+# ---------------------------------------------------------
+reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
-db = client["gxp-guide"]
-collection = db["chunks"] 
 
-# -----------------------------
-# 3. Load LLM (Flan)
-# -----------------------------
+# ---------------------------------------------------------
+# 3. Load Flan-T5 LLM
+# ---------------------------------------------------------
 model_name = "google/flan-t5-base"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -42,57 +34,68 @@ llm = pipeline(
     temperature=0.2,
 )
 
-# -----------------------------
-# 4. Semantic Search (UPDATED)
-# -----------------------------
-def semantic_search(query, k=5):
 
-    ### CHANGE: retrieve MORE candidates for reranking
-    initial_k = 20   # <-- NEW: retrieve 20 candidates instead of k
+# ---------------------------------------------------------
+# 4. MongoDB Initialization (called from Streamlit)
+# ---------------------------------------------------------
+def init_mongo(uri):
+    client = MongoClient(uri)
+    db = client["gxp-guide"]
+    return db["chunks"]
+
+
+# ---------------------------------------------------------
+# 5. Semantic Search (retrieve top 20 candidates)
+# ---------------------------------------------------------
+def semantic_search(query, collection, k=5):
+
+    initial_k = 20  # retrieve more for reranking
 
     query_emb = embedder.encode(query)
     results = []
 
     for doc in collection.find():
-        score = np.dot(query_emb, doc["embedding"]) / (
-            np.linalg.norm(query_emb) * np.linalg.norm(doc["embedding"])
+        emb = np.array(doc["embedding"])
+        score = np.dot(query_emb, emb) / (
+            np.linalg.norm(query_emb) * np.linalg.norm(emb)
         )
         results.append((score, doc))
 
     results.sort(key=lambda x: x[0], reverse=True)
 
-    ### CHANGE: return top 20 for reranking
-    return [doc for _, doc in results[:initial_k]]   # <-- UPDATED
+    return [doc for _, doc in results[:initial_k]]
 
 
-# -----------------------------
-# 4B. Rerank Results (NEW)
-# -----------------------------
+# ---------------------------------------------------------
+# 6. Rerank Results
+# ---------------------------------------------------------
 def rerank_results(query, docs):
     if not docs:
-        return []   # <-- prevents IndexError
+        return []
 
     pairs = [(query, d["text"]) for d in docs]
     scores = reranker.predict(pairs)
+
     ranked = sorted(zip(docs, scores), key=lambda x: x[1], reverse=True)
+
     return [doc for doc, score in ranked[:5]]
 
-# -----------------------------
-# 5. Build Context (UPDATED)
-# -----------------------------
-def build_context(chunks):
 
-    ### CHANGE: structured chunk separators for FLAN
+# ---------------------------------------------------------
+# 7. Build Context
+# ---------------------------------------------------------
+def build_context(chunks):
     context = ""
     for i, c in enumerate(chunks):
-        context += f"=== CHUNK {i+1} ===\n{c['text']}\n\n"   # <-- UPDATED
+        context += f"=== CHUNK {i+1} ===\n{c['text']}\n\n"
     return context
 
 
-# -----------------------------
-# 6. Generate Answer
-# -----------------------------
+# ---------------------------------------------------------
+# 8. Generate Answer
+# ---------------------------------------------------------
 def generate_answer(question, context):
+
     prompt = f"""
 You are an expert assistant specializing in FDA 21 CFR Part 11 and GxP compliance.
 
@@ -114,27 +117,29 @@ QUESTION:
 
 ANSWER:
 """
+
     output = llm(prompt)[0]["generated_text"]
     return output
 
 
-# -----------------------------
-# 7. Public API for Streamlit (UPDATED)
-# -----------------------------
-def ask(question, k=5):
+# ---------------------------------------------------------
+# 9. Public API for Streamlit
+# ---------------------------------------------------------
+def ask(question, collection, k=5):
 
-    ### CHANGE: retrieve initial candidates
-    initial_chunks = semantic_search(question, k=k)
+    # Step 1: retrieve initial candidates
+    initial_chunks = semantic_search(question, collection, k=k)
 
     if not initial_chunks:
         return "No relevant context found in the knowledge base."
 
-    ### NEW: rerank them
+    # Step 2: rerank
     reranked_chunks = rerank_results(question, initial_chunks)
 
-    ### UPDATED: build context from reranked chunks
+    # Step 3: build context
     context = build_context(reranked_chunks)
 
-    ### unchanged
+    # Step 4: generate answer
     answer = generate_answer(question, context)
+
     return answer
