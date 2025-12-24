@@ -24,7 +24,7 @@ embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 def llm(prompt):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Authorization": f"Bearer {st.secrets['GROQ_API_KEY']}",
         "Content-Type": "application/json"
     }
 
@@ -36,7 +36,8 @@ def llm(prompt):
     }
 
     response = requests.post(url, headers=headers, json=payload)
-    return response.json()["choices"][0]["message"]["content"]
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
 
 # ---------------------------------------------------------
 # 3. MongoDB Initialization 
@@ -106,7 +107,7 @@ Question:
 Answer clearly and cite section numbers.
 """
 
-    response = llm(prompt)[0]["generated_text"]
+    response = llm(prompt)
     return response
 
 # ---------------------------------------------------------
