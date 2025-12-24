@@ -119,7 +119,7 @@ Context:
 Question:
 {question}
 
-Only cite section numbers from section headers. DO not cite section numbers within paragraph bodies unless it is part of the answer.
+Only cite section numbers from section headers.
 """
 
     response = llm(prompt)
